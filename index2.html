@@ -1,0 +1,136 @@
+<!--doctype HTML-->
+<html>
+	<head>
+	<style>
+	body {
+    font-family: century gothic;
+	color: #fff;
+}
+	div#container {
+    width: 400px;
+    min-width: 400px;
+    background: #0255a9;
+    padding: 10px 20px 20px 20px;
+    border-radius: 9px;
+}
+h2 {
+    font-family: century gothic;
+    font-size: 20pt;
+    text-align: center;
+    padding: 10px;
+    background: #fff;
+    border-radius: 9px;
+	color: #333;
+}
+.panel textarea {
+    padding: 5px 10px;
+    border-radius: 9px;
+    border: none;
+    width: 95%;
+    margin-top: 4px;
+}
+.panel button {
+    padding: 5px 10px;
+    border-radius: 9px;
+    border: none;
+}
+.panel input {
+    padding: 5px 10px;
+    border-radius: 9px;
+    border: none;
+}
+.panel {
+    padding: 10px;
+}
+p.me {
+    background: #c5ef73;
+    color: #333;
+    padding: 10px;
+    border-radius: 9px;
+    text-align: right;
+}
+p.you{
+    background: #0a9d0f;
+    color: #fff;
+    padding: 10px;
+    border-radius: 9px;
+	text-align: left;
+}
+	</style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+	<script src="peerjs-master\dist\peer.js"></script>
+		<script>
+		
+	var conn;	
+	
+	var x=1,name;
+	do{
+	var name=prompt("Enter you Alias:");
+	if(name==""){alert("Please enter a valid Alias");} else {x=2;}
+	}while(x==1);
+	var peer = new Peer(name, {host: 'localhost', port: 3000, path: '/peerjs'});
+
+	peer.on('open', function(id){
+		console.log('My peer ID is:' + id);
+		document.getElementById('idname').innerHTML = '<b>My Alias: </b><font color="#4ee676">' + id + '</font>';
+	});     
+	
+	peer.on('connection', function(conn) 
+{ 
+    console.log('peer connected');
+    conn.on('open', function() {
+        console.log('conn open');
+    });
+    conn.on('data', function(data) {
+        console.log(data);
+		$("#content").append("<p class='you'><b>Sender:"+ data +'</b></p>');
+    });
+});
+
+
+	function ConnectToPeer()
+	{
+		var peerId = document.getElementById("idtext").value;
+		console.log(peerId);
+		conn = peer.connect(peerId);
+
+
+		peer.on('error', function(err){
+			console.log('error');
+		});
+
+	};
+
+	function SendMessage()
+	{
+		var msg = document.getElementById("textcontent").value;
+		console.log(msg);
+		conn.send(msg);
+			$("#content").append("<p class='me'><b>Me:"+ msg +'</b></p>');
+		document.getElementById("textcontent").value="";
+	};
+		
+	</script>
+	</head>
+	<body>
+	<div id="container">
+		<h2>Simple Messaging App</h2>
+		<p id="idname"></p>
+			<div class="panel">
+				<span class="label">Connect to:</text> <input type="text" id="idtext" />
+				<button id="connect" onclick="ConnectToPeer()">Connect</button>
+			</div>
+			<div class="panel">
+				<text class="label">Message:</text>
+				<br/>
+				<textarea id="textcontent"></textarea>
+				<br/>
+				<button id="send" onclick="SendMessage()">Send</button><br/>
+			</div>
+		<div id="content"> 
+			<div style="clear: both;" />
+		</div>
+	</div>
+	</body>
+	
+</html>
