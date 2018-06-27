@@ -1,5 +1,5 @@
 # Project Chat App
-Simple Messaging App
+Simple One to One Messaging App using PeerJS
 
 ## Setup
 
